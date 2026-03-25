@@ -22,4 +22,12 @@ class Household extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class)
+            ->using(HouseholdUser::class)
+            ->withPivot('role')
+            ->withTimestamps('created_at', false);
+    }
 }

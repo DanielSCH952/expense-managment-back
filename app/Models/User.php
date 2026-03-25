@@ -50,4 +50,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function households()
+    {
+        return $this->belongsToMany(Household::class)
+            ->using(HouseholdUser::class)
+            ->withPivot('role')
+            ->withTimestamps('created_at', false);
+    }
 }
