@@ -16,7 +16,9 @@ class Household extends Model
         'name',
         'description',
         'invitation_code',
-        'created_by'
+        'invitation_expires_at',
+        'allow_invitations',
+        'created_by',
     ];
 
     public function creator()
