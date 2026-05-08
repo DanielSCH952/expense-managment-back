@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\HouseholdResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class HouseholdController extends Controller
 {
@@ -53,6 +54,9 @@ class HouseholdController extends Controller
             $household = Household::create([
                 'name' => $request->name,
                 'description' => $request->description,
+                'invitation_code' => strtoupper('HOME-' . Str::random(6)),
+                'invitation_expires_at' => now()->addDays(30),
+                'created_by' => auth()->id(),
             ]);
 
             $household->users()->attach(
@@ -62,20 +66,10 @@ class HouseholdController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'message' => 'Grupo creado',
-                'data' => new HouseholdResource(
-                    $household->load('users')
-                )
-            ], 201);
+            return response()->json(['message' => 'Grupo creado', 'data' => new HouseholdResource($household->load('users'))], 201);
         } catch (\Throwable $e) {
-
             DB::rollBack();
-
-            return response()->json([
-                'message' => 'Error al crear el grupo',
-                'error' => $e->getMessage(),
-            ], 500);
+            return response()->json(['message' => 'Error al crear el grupo', 'error' => $e->getMessage(),], 500);
         }
     }
 
@@ -98,7 +92,8 @@ class HouseholdController extends Controller
     /**
      * Endpoint para actualizar la información de un hogar
      */
-    public function update(Request $request, Household $household) {
+    public function update(Request $request, Household $household)
+    {
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:500'],
