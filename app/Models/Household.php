@@ -14,6 +14,7 @@ class Household extends Model
 
     protected $fillable = [
         'name',
+        'description',
         'invitation_code',
         'created_by'
     ];

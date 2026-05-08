@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('households', function (Blueprint $table) {
             $table->id();
             $table->string("name");
+            $table->text('description');
             $table->string("invitation_code");
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at');
